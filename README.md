@@ -4,8 +4,22 @@
 
 # Teslo API
 
-1. Levantar la base de datos
+1. Clone project and install its dependencies:
+
+```
+npm install
+```
+
+2. Clone `.env.template` file, rename it to `.env` and fill in the corresponding values
+
+3. Start the database in Docker:
 
 ```
 docker-compose up -d
+```
+
+4. Execute project in development:
+
+```
+npm run start:dev
 ```
