@@ -155,4 +155,14 @@ export class ProductService {
       'Unexpected error. Check Server logs',
     );
   }
+
+  async _deleteAllProducts() {
+    const query = this._productRepository.createQueryBuilder('product');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this._handleDBExceptions(error);
+    }
+  }
 }
