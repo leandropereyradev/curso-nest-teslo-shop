@@ -8,7 +8,8 @@ import {
 import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { fileFilter } from './helpers/fileFilter.helper';
+import { fileFilter, fileNamer } from './helpers';
+import { diskStorage } from 'multer';
 
 @Controller('files')
 export class FilesController {
@@ -18,13 +19,18 @@ export class FilesController {
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter: fileFilter,
+      // limits: {fieldSize: 1000},
+      storage: diskStorage({
+        destination: './static/products',
+        filename: fileNamer,
+      }),
     }),
   )
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('Make sure that file is an image');
 
     return {
-      fileName: file.originalname,
+      fileName: file.filename,
     };
   }
 }
