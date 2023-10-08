@@ -14,10 +14,14 @@ import { Response } from 'express';
 
 import { fileFilter, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly _filesService: FilesService) {}
+  constructor(
+    private readonly _filesService: FilesService,
+    private readonly _configService: ConfigService,
+  ) {}
 
   @Get('product/:imageName')
   findProductImage(
@@ -43,7 +47,9 @@ export class FilesController {
   uploadProductImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('Make sure that file is an image');
 
-    const secureUrl = `${file.filename}`;
+    const secureUrl = `${this._configService.get('HOST_API')}/files/product/${
+      file.filename
+    }`;
 
     return {
       secureUrl,
