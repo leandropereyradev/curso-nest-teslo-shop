@@ -1,11 +1,13 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { MessagesWsService } from './messages-ws.service';
+import { NewMessageDto } from './dto/new-message.dto';
 
 @WebSocketGateway({ cors: true })
 export class MessagesWsGateway
@@ -41,5 +43,25 @@ export class MessagesWsGateway
       'client-updated',
       this.messagesWsService.getConnectedClients(),
     );
+  }
+
+  @SubscribeMessage('message-from-client')
+  handleMessageFromClient(client: Socket, payload: NewMessageDto) {
+    //! Emite unicamente al cliente que envía el mensaje
+    // client.emit('message-from-server', {
+    //   fullName: 'yo',
+    //   message: payload.message || 'no-message',
+    // });
+
+    //! Emite a todos menos al cliente inicial
+    // client.broadcast.emit('message-from-server', {
+    //   fullName: 'yo',
+    //   message: payload.message || 'no-message',
+    // });
+
+    this.wss.emit('message-from-server', {
+      fullName: 'yo',
+      message: payload.message || 'no-message',
+    });
   }
 }
